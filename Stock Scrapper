@@ -1,0 +1,146 @@
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+import bs4
+import requests
+import time
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+import random
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+
+class miningCompanies():
+    def prime(self):
+        self.miningscraper()
+
+    def miningscraper(self):
+        while True:
+            self.driver = webdriver.Chrome('/Users/admin/Downloads/Chromedriver')
+            self.driver.get('https://finance.yahoo.com/quote/' + self.miningLoop() + '?p=' + self.miningLoop() + '&.tsrc=fin-srch')
+            self.driver.implicitly_wait(5)
+            time.sleep(5)
+            self.scrapData()
+            time.sleep(5)
+
+    def miningLoop(self):
+    #I'm having a hard time looping this into the main program, I'll fix it later. 
+        while True:
+            companies = ["XOM", "PM", "KXPLF", "PLG", "PLM", 'NCPCF', 'SBUM', 'OTMN', 'SLSR', 'NXXGF',
+                         'CAHPF', 'FGOVF', 'ISVLF', 'SGRCF', 'KTGDF', 'KOREF', 'AHELF', 'DOLLF', 'DMEHF', 'TLRS', 'SSVFF',
+                         'NEVDF', 'NMTLF', 'AAMMF', 'FFMGF', 'GLDLF', 'ELYGF', 'WLBMF', 'LRTNF', 'ANXGF', 'GPL', 'NAK',
+                         'MLRKF', 'RVSDF', 'MUX', 'AUY', 'NGD', 'SLVRF', 'GORO', 'GOLD', 'EGO', 'SLVTF', 'ASX:AZS', 'AAGFF',
+                         'ORAGF', 'SILV', 'CCJ', 'UEC', 'DGC.TO', 'OR', 'KGC', 'KOOYF', 'SVM', 'KL', 'JAG',
+                         'WM', 'DSV', 'KORE', 'FVL', 'ELY', 'TUO', 'BNCH', 'DV', 'ABRA', 'SDR', 'GGI', 'AUY', 'HMY', 'NST',
+                         'BTG', 'EVN', 'SAR', 'EDV', 'EQX', 'NG', 'HL', 'PVG', 'SAND', 'CDE', 'MDKA', 'SSRM', 'SILV',
+                         'USAS', 'AXU', 'GBR', 'AR', 'HGM', 'GOR', 'WGX', 'LUG', 'HOC', 'POG', 'TXG', 'MAG', 'FSM', 'CEY',
+                         'RRL', 'SLR', 'AG', 'AAU', 'TGLDF', 'KLR']
+
+            list = len(companies)
+            for x in range(list):
+                return companies[x]
+
+
+    def scrapData(self):
+        self.driver.implicitly_wait(10)
+        time.sleep(2)
+        self.PreviousClose = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[1]/table/tbody/tr[1]/td[2]/span')
+        self.EPS = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[4]/td[2]/span')
+        self.Market_Cap = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[1]/td[2]/span')
+        self.PE_Ratio = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[3]/td[2]/span')
+        self.Dividend = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[6]/td[2]')
+        self.apiDrive1()
+        self.driver.implicitly_wait(10)
+        time.sleep(3)
+        #Clicking on the Statistic page
+        statistics = self.driver.find_element_by_xpath('//*[@id="quote-nav"]/ul/li[5]/a/span')
+        statistics.click()
+        #you have to wait awhile because Javascript loads and then reloads and if its not on the page selenium will just throw you an error. 
+        self.driver.implicitly_wait(10)
+        time.sleep(3)
+        self.insiders = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[5]/td[2]')
+        self.shareShort = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[7]/td[2]')
+        self.institutions = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[6]/td[2]')
+        self.revenue = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[3]/div/div[4]/div/div/table/tbody/tr[1]/td[2]')
+        self.high = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[1]/div/div/table/tbody/tr[4]/td[2]')
+        self.low = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[1]/div/div/table/tbody/tr[5]/td[2]')
+        self.apiDrive2()
+        #I'mm do more with this i just made this today. 
+        #self.financial = self.driver.find_element_by_xpath('//*[@id="quote-nav"]/ul/li[8]/a/span')
+        #financial.click()
+        self.driver.implicitly_wait(3)
+        time.sleep(2)
+        self.driver.close()
+
+    def apiDrive1(self):
+      #I split the api into 2 parts, 3 later, because It was easier to make them into functions this way. 
+        scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
+                 "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+
+        creds = ServiceAccountCredentials.from_json_keyfile_name(#CREDS GO HERE!!, scope)
+        client = gspread.authorize(creds)
+        sheet = client.open("Name of your google sheet file").sheet1  # The sheet number so like 1 or 2 or 1000
+        data = sheet.get_all_records() # I was going to do something with this but I forgot what...
+        
+        #first page loop
+        x = 106
+        i = 1
+        while i < x:
+            if i == 24 or 43 or 63 or 84 or 102:
+                i += 1
+            # you have to put a cool down time between requests or Google API will reject you
+            self.MC = sheet.update_cell(i, 2, self.Market_Cap.text)
+            time.sleep(0.2)
+            self.PC = sheet.update_cell(i, 4, self.PreviousClose.text)
+            time.sleep(0.2)
+            self.PER = sheet.update_cell(i, 19, self.PE_Ratio.text)
+            time.sleep(0.2)
+            self.EPSC = sheet.update_cell(i, 21, self.EPS.text)
+            time.sleep(0.2)
+            self.Div = sheet.update_cell(23, i, self.Dividend.text)
+            i += 1
+            break
+
+
+    def apiDrive2(self):
+        self.driver.implicitly_wait(10)
+        time.sleep(5)
+        scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
+                 "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+
+        creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+        client = gspread.authorize(creds)
+        sheet = client.open("Company Break Down").sheet1  # Open the spreadhseet
+        data = sheet.get_all_records()
+        x = 106
+        i = 1
+        while i < x:
+            if i == 24 or 43 or 63 or 84 or 102:
+                i += 1
+            # you have to put a cool down time between requests or Google API will reject you
+            self.insider = sheet.update_cell(i, 8, self.insiders.text)
+            time.sleep(0.2)
+            self.institution = sheet.update_cell(i, 7, self.institutions.text)
+            time.sleep(0.2)
+            self.short = sheet.update_cell(i, 28, self.shareShort.text)
+            time.sleep(0.2)
+            self.rev = sheet.update_cell(i, 21, self.revenue.text)
+            time.sleep(0.2)
+            self.high52 = sheet.update_cell(i, 34, self.high.text)
+            time.sleep(0.2)
+            self.low52 = sheet.update_cell(i, 33, self.low.text)
+            i += 1
+            break
+
+
+
+
+
+beserk = miningCompanies()
+beserk.prime()
