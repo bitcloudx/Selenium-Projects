@@ -21,91 +21,142 @@ class miningCompanies():
         self.miningscraper()
 
     def miningscraper(self):
-        while True:
-            self.driver = webdriver.Chrome('/Users/admin/Downloads/Chromedriver')
-            self.driver.get('https://finance.yahoo.com/quote/' + self.miningLoop() + '?p=' + self.miningLoop() + '&.tsrc=fin-srch')
-            self.driver.implicitly_wait(5)
-            time.sleep(5)
-            self.scrapData()
-            time.sleep(5)
 
-    def miningLoop(self):
-    #I'm having a hard time looping this into the main program, I'll fix it later. 
-        while True:
-            companies = ["XOM", "PM", "KXPLF", "PLG", "PLM", 'NCPCF', 'SBUM', 'OTMN', 'SLSR', 'NXXGF',
-                         'CAHPF', 'FGOVF', 'ISVLF', 'SGRCF', 'KTGDF', 'KOREF', 'AHELF', 'DOLLF', 'DMEHF', 'TLRS', 'SSVFF',
-                         'NEVDF', 'NMTLF', 'AAMMF', 'FFMGF', 'GLDLF', 'ELYGF', 'WLBMF', 'LRTNF', 'ANXGF', 'GPL', 'NAK',
-                         'MLRKF', 'RVSDF', 'MUX', 'AUY', 'NGD', 'SLVRF', 'GORO', 'GOLD', 'EGO', 'SLVTF', 'ASX:AZS', 'AAGFF',
-                         'ORAGF', 'SILV', 'CCJ', 'UEC', 'DGC.TO', 'OR', 'KGC', 'KOOYF', 'SVM', 'KL', 'JAG',
-                         'WM', 'DSV', 'KORE', 'FVL', 'ELY', 'TUO', 'BNCH', 'DV', 'ABRA', 'SDR', 'GGI', 'AUY', 'HMY', 'NST',
-                         'BTG', 'EVN', 'SAR', 'EDV', 'EQX', 'NG', 'HL', 'PVG', 'SAND', 'CDE', 'MDKA', 'SSRM', 'SILV',
-                         'USAS', 'AXU', 'GBR', 'AR', 'HGM', 'GOR', 'WGX', 'LUG', 'HOC', 'POG', 'TXG', 'MAG', 'FSM', 'CEY',
-                         'RRL', 'SLR', 'AG', 'AAU', 'TGLDF', 'KLR']
-
-            list = len(companies)
-            for x in range(list):
-                return companies[x]
-
+        self.companies = ["XOM", "PM", "KXPLF", "PLG", "PLM", 'NCPCF', 'SBUM', 'OTMN', 'SLSR', 'NXXGF',
+                     'CAHPF', 'FGOVF', 'ISVLF', 'SGRCF', 'KTGDF', 'KOREF', 'AHELF', 'DOLLF', 'DMEHF', 'TLRS',
+                     'SSVFF',
+                     'NEVDF', 'NMTLF', 'AAMMF', 'FFMGF', 'GLDLF', 'ELYGF', 'WLBMF', 'LRTNF', 'ANXGF', 'GPL', 'NAK',
+                     'MLRKF', 'RVSDF', 'MUX', 'AUY', 'NGD', 'SLVRF', 'GORO', 'GOLD', 'EGO', 'SLVTF', 'ASX:AZS',
+                     'AAGFF',
+                     'ORAGF', 'SILV', 'CCJ', 'UEC', 'DGC.TO', 'OR', 'KGC', 'KOOYF', 'SVM', 'KL', 'JAGGF',
+                     'WM', 'DSV', 'KOREF', 'FVL', 'ELY', 'TUO', 'BNCH', 'DV', 'ABRA', 'SDR', 'GGI', 'AUY', 'HMY',
+                     'NST',
+                     'BTG', 'EVN', 'SAR', 'EDV', 'EQX', 'NG', 'HL', 'PVG', 'SAND', 'CDE', 'MDKA', 'SSRM', 'SILV',
+                     'USAS', 'AXU', 'GBR', 'AR', 'HGM', 'GOR', 'WGX', 'LUG', 'HOC', 'POG', 'TXG', 'MAG', 'FSM',
+                     'CEY',
+                     'RRL', 'SLR', 'AG', 'AAU', 'TGLDF', 'KLR']
+        self.counter = 2
+        while self.counter < 106:
+            time.sleep(6)
+            for self.x in range(len(self.companies)):
+                self.driver = webdriver.Chrome('/Users/admin/Downloads/Chromedriver')
+                self.driver.get('https://finance.yahoo.com/quote/' + self.companies[self.x] + '?p=' + self.companies[self.x] + '&.tsrc=fin-srch')
+                self.driver.implicitly_wait(5)
+                time.sleep(5)
+                self.scrapData()
+                time.sleep(5)
 
     def scrapData(self):
         self.driver.implicitly_wait(10)
-        time.sleep(2)
-        self.PreviousClose = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[1]/table/tbody/tr[1]/td[2]/span')
-        self.EPS = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[4]/td[2]/span')
-        self.Market_Cap = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[1]/td[2]/span')
-        self.PE_Ratio = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[3]/td[2]/span')
-        self.Dividend = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[6]/td[2]')
+        time.sleep(5)
+        #trying to find the first set of elements
+        try:
+            self.PreviousClose = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[1]/table/tbody/tr[1]/td[2]/span')
+            self.EPS = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[4]/td[2]/span')
+            self.Market_Cap = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[1]/td[2]/span')
+            self.PE_Ratio = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[3]/td[2]/span')
+            self.Dividend = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[6]/td[2]')
+            self.averageVol = self.driver.find_element_by_xpath('//*[@id="quote-summary"]/div[1]/table/tbody/tr[8]/td[2]/span')
+
+        #If you cant thats okay just lemme know!
+        except Exception:
+            print('not found')
+            pass
         self.apiDrive1()
         self.driver.implicitly_wait(10)
         time.sleep(3)
-        #Clicking on the Statistic page
-        statistics = self.driver.find_element_by_xpath('//*[@id="quote-nav"]/ul/li[5]/a/span')
-        statistics.click()
-        #you have to wait awhile because Javascript loads and then reloads and if its not on the page selenium will just throw you an error. 
-        self.driver.implicitly_wait(10)
+
         time.sleep(3)
-        self.insiders = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[5]/td[2]')
-        self.shareShort = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[7]/td[2]')
-        self.institutions = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[6]/td[2]')
-        self.revenue = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[3]/div/div[4]/div/div/table/tbody/tr[1]/td[2]')
-        self.high = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[1]/div/div/table/tbody/tr[4]/td[2]')
-        self.low = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[1]/div/div/table/tbody/tr[5]/td[2]')
+        #trying to click on that statictics page
+        try:
+            stats = self.driver.find_element_by_xpath('//*[@id="quote-nav"]/ul/li[5]/a/span')
+            stats.click()
+            time.sleep(1)
+        except Exception:
+            print("no stat link found")
+            pass
+        #this is the backup idk if it would work or not tho.
+        finally:
+            self.driver.get('https://finance.yahoo.com/quote/'+ self.companies[self.x] +'/key-statistics?p=' + self.companies[self.x])
+            time.sleep(5)
+            pass
+        self.driver.implicitly_wait(10)
+        time.sleep(5)
+        try:
+            self.cash = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[3]/div/div[5]/div/div/table/tbody/tr[1]/td[2]')
+            self.shareShort = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[7]/td[2]')
+            self.institutions = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[6]/td[2]')
+            self.revenue = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[3]/div/div[4]/div/div/table/tbody/tr[1]/td[2]')
+            self.high = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[1]/div/div/table/tbody/tr[4]/td[2]')
+            self.low = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[1]/div/div/table/tbody/tr[5]/td[2]')
+            self.insiders = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[5]/td[2]')
+            self.sharesoutstanding = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[2]/div/div/table/tbody/tr[3]/td[2]')
+            self.totaldebt = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[3]/div/div[5]/div/div/table/tbody/tr[3]/td[2]')
+            self.payOutRatio = self.driver.find_element_by_xpath('//*[@id="Col1-0-KeyStatistics-Proxy"]/section/div[3]/div[2]/div/div[3]/div/div/table/tbody/tr[6]/td[2]')
+
+        except Exception:
+            print('not found2')
+            pass
         self.apiDrive2()
-        #I'mm do more with this i just made this today. 
-        #self.financial = self.driver.find_element_by_xpath('//*[@id="quote-nav"]/ul/li[8]/a/span')
-        #financial.click()
+
+        #time.sleep(3)
+        #self.driver.close()
+        #self.driver.get('https://finance.yahoo.com/quote/' + self.companies[x] + '?p=' + self.companies[x] + '&.tsrc=fin-srch')
+        #gandA = self.driver.find_element_by_xpath('//*[@id="Col1-1-Financials-Proxy"]/section/div[4]/div[1]/div[1]/div[2]/div[4]/div[2]/div[1]/div[1]/div[2]/span')
+
         self.driver.implicitly_wait(3)
         time.sleep(2)
         self.driver.close()
+        self.counter += 1
 
     def apiDrive1(self):
-      #I split the api into 2 parts, 3 later, because It was easier to make them into functions this way. 
         scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
                  "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
-        creds = ServiceAccountCredentials.from_json_keyfile_name(#CREDS GO HERE!!, scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
         client = gspread.authorize(creds)
-        sheet = client.open("Name of your google sheet file").sheet1  # The sheet number so like 1 or 2 or 1000
-        data = sheet.get_all_records() # I was going to do something with this but I forgot what...
-        
+        sheet = client.open("Company Break Down").sheet1  # Open the spreadhseet
+        data = sheet.get_all_records()
         #first page loop
-        x = 106
-        i = 1
-        while i < x:
-            if i == 24 or 43 or 63 or 84 or 102:
-                i += 1
+
+        try:
             # you have to put a cool down time between requests or Google API will reject you
-            self.MC = sheet.update_cell(i, 2, self.Market_Cap.text)
-            time.sleep(0.2)
-            self.PC = sheet.update_cell(i, 4, self.PreviousClose.text)
-            time.sleep(0.2)
-            self.PER = sheet.update_cell(i, 19, self.PE_Ratio.text)
-            time.sleep(0.2)
-            self.EPSC = sheet.update_cell(i, 21, self.EPS.text)
-            time.sleep(0.2)
-            self.Div = sheet.update_cell(23, i, self.Dividend.text)
-            i += 1
-            break
+            self.avgVol = sheet.update_cell(self.counter, 25, self.averageVol.text)
+            time.sleep(1)
+        except Exception:
+            print('Average Volume Not found')
+            pass
+        try:
+            self.MC = sheet.update_cell(self.counter, 2, self.Market_Cap.text)
+            time.sleep(1)
+        except Exception:
+            print('Market Cap Not found')
+            pass
+        try:
+            self.PC = sheet.update_cell(self.counter, 4, self.PreviousClose.text)
+            time.sleep(1)
+        except Exception:
+            print('Previous Close Not Found')
+            pass
+        try:
+            self.PER = sheet.update_cell(self.counter, 18, self.PE_Ratio.text)
+            time.sleep(1)
+        except Exception:
+            print('P/E Ratio Not found')
+            pass
+        try:
+            self.EPSC = sheet.update_cell(self.counter, 20, self.EPS.text)
+            time.sleep(1)
+        except Exception:
+            print('EPS not found')
+            pass
+        try:
+            self.Div = sheet.update_cell(self.counter, 22, self.Dividend.text)
+            time.sleep(1)
+            print(self.counter)
+        except Exception:
+            print('Dividend Not found')
+            pass
 
 
     def apiDrive2(self):
@@ -118,28 +169,109 @@ class miningCompanies():
         client = gspread.authorize(creds)
         sheet = client.open("Company Break Down").sheet1  # Open the spreadhseet
         data = sheet.get_all_records()
-        x = 106
-        i = 1
-        while i < x:
-            if i == 24 or 43 or 63 or 84 or 102:
-                i += 1
+
+        try:
             # you have to put a cool down time between requests or Google API will reject you
-            self.insider = sheet.update_cell(i, 8, self.insiders.text)
-            time.sleep(0.2)
-            self.institution = sheet.update_cell(i, 7, self.institutions.text)
-            time.sleep(0.2)
-            self.short = sheet.update_cell(i, 28, self.shareShort.text)
-            time.sleep(0.2)
-            self.rev = sheet.update_cell(i, 21, self.revenue.text)
-            time.sleep(0.2)
-            self.high52 = sheet.update_cell(i, 34, self.high.text)
-            time.sleep(0.2)
-            self.low52 = sheet.update_cell(i, 33, self.low.text)
-            i += 1
-            break
+            self.payoutR = sheet.update_cell(self.counter, 24, self.payOutRatio.text)
+            time.sleep(1)
+        except Exception:
+            print('Payout Ratio not found')
+            pass
+        try:
+            self.totald = sheet.update_cell(self.counter, 27, self.totaldebt.text)
+            time.sleep(1)
+        except Exception:
+            print('Total debt not found')
+            pass
+        try:
+            self.sharesout = sheet.update_cell(self.counter, 30, self.sharesoutstanding.text)
+            time.sleep(1)
+        except Exception:
+            print('Shares Outstanding not found')
+            pass
+        try:
+            self.cash1 = sheet.update_cell(self.counter, 17, self.cash.text)
+            time.sleep(1)
+        except Exception:
+            print('Cash not found...might wanna check that one')
+            pass
+        try:
+            self.institution = sheet.update_cell(self.counter, 7, self.institutions.text)
+            time.sleep(1)
+        except Exception:
+            print('Institutional share holders not found')
+            pass
+        try:
+            self.short = sheet.update_cell(self.counter, 28, self.shareShort.text)
+            time.sleep(1)
+        except Exception:
+            print('Short Sellers not found')
+            pass
+        try:
+            self.rev = sheet.update_cell(self.counter, 5, self.revenue.text)
+            time.sleep(1)
+        except Exception:
+            print('Revenue Not found')
+            pass
+        try:
+            self.high52 = sheet.update_cell(self.counter, 33, self.high.text)
+            time.sleep(1)
+        except Exception:
+            print('52 week high not found')
+            pass
+        try:
+            self.insider = sheet.update_cell(self.counter, 8, self.insiders.text)
+            time.sleep(1)
+        except Exception:
+            print('Insider share holders not found')
+            pass
+        try:
+            self.low52 = sheet.update_cell(self.counter, 32, self.low.text)
+            print(self.counter)
+        except Exception:
+            print('52 Week low not found')
+            pass
+
+    def etfChecker(self):
 
 
+        if self.companies[self.x] in {self.gdx, self.gdxj} == True:
 
+        self.gdx = {12.36: 'NEM', 10.68: 'GOLD', 6.52: 'FNV', 5.22: 'NCM',
+               5.05: 'AEM', 4.77: 'KL', 3.43: 'KGC', 3.34: 'AU',
+               2.94: 'GFI', 2.70: 'RGLD', 2.54: 'NST', 2.36: 'PAAS',
+               2.34: 'EVN', 2.18: 'BTG', 2.01: '2899', 2.00: 'AUY',
+               1.55: 'SSRM', 1.44: 'EDV', 1.42: 'SAR', 1.33: 'AGI',
+               1.21: 'BVN', 1.18: '1818', 1.15: 'CG', 1.03: 'HL',
+               0.95: 'HMY', 0.91: 'EQX', 0.88: 'AG', 0.86: 'EGO',
+               0.78: 'PVG', 0.77: 'CDE', 0.71: 'CEY', 0.70: 'OR',
+               0.69: 'TGZ', 0.63: 'IAG', 0.56: 'NGD', 0.53: 'RRL',
+               0.52: 'SAND', 0.49: 'TXG', 0.485: 'SBM', 0.48: 'KNT',
+               0.46: 'FSM', 0.45: 'DPM', 0.44: 'SLR', 0.425: 'WDO',
+               0.42: 'OGC', 0.39: 'SVM', 0.375: 'PRU', 0.37: 'RMS',
+               0.33: 'DRD', 0.29: 'GOR', 0.23: 'RSG'}
+
+        self.gdxj = {6.60: 'KGC', 5.58: 'GFI', 4.96: 'PAAS', 4.94: 'NST',
+                4.19: 'AUY', 4.08: 'EVN', 3.90: 'BTG', 3.09: 'SSRM',
+                2.69: 'SAR', 2.29: 'AGI', 2.125: 'EDV', 2.12: '1818',
+                1.94: 'EGO', 1.93: 'PE&OLES', 1.92: 'BVN', 1.91: 'EQX',
+                1.77: 'HL', 1.71: 'NG', 1.63: 'AG', 1.59: 'HMY', 1.54: 'CG',
+                1.50: 'PVG', 1.31: 'CDE', 1.28: 'MDKA', 1.22: 'CEY',
+                1.20: '1AG', 1.15: 'NGD', 1.135: 'KNT', 1.13: 'RRL',
+                1.11: 'SAND', 1.04: 'TGZ', 1.041: 'SBM', 1.03: 'FSM',
+                0.975: 'OR', 0.97: 'MAG', 0.94: 'TXG', 0.91: 'WDO',
+                0.90: 'GGP', 0.88: 'SILV', 0.86: 'SVM', 0.85: 'POG',
+                0.845: 'OSC', 0.84: 'SA', 0.80: 'SLR', 0.79: 'DPM',
+                0.76: 'RMS', 0.75: 'PRU', 0.69: 'DEG', 0.68: 'LUG',
+                0.66: 'OSK', 0.63: 'HOC', 0.59: 'WGX', 0.56: 'GOR',
+                0.50: 'AR', 0.495: 'GBR', 0.49: 'EXK', 0.44: 'WAF',
+                0.43: 'KOZAL', 0.37: 'NUAG', 0.35: 'RSG', 0.32: 'ALK',
+                0.315: 'PG', 0.31: 'WM', 0.305: 'USAS', 0.304: 'ROXG',
+                0.302: 'AXU', 0.307: 'MUX', 0.29: 'KRR', 0.27: 'GPL',
+                0.24: 'NVO', 0.23: 'GCM', 0.22: 'AMI', 0.215: 'RED',
+                0.21: 'GSS', 0.20: 'GORO', 0.125: 'GSV', 0.12: 'DCN',
+                0.09: 'DRD', 0.01: 'SMC', 0.003: 'WHG', 0.002: 'ASM',
+                0.001: '246'}
 
 
 beserk = miningCompanies()
