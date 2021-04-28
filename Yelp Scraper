@@ -1,0 +1,168 @@
+#Automated Review collection internal tracking informal charting
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import selenium.webdriver.common.keys
+from selenium.webdriver.common.keys import Keys
+from PIL import Image
+import pyautogui
+import pyscreenshot
+import time
+import tkinter as tk
+import datetime
+
+a = 'https://www.yelp.com/'
+bone = 'https://www.yelp.com/'
+c = 'https://www.yelp.com/'
+
+urls = [a, bone, c]
+class arctic():
+    def loop(self, mylabel, selection):
+        self.myLabel = mylabel
+        self.selection = selection
+        self.launcher()
+        self.calender_checker()
+
+    def launcher(self):
+        # Remeber that on Windows the USER DATA file is the profile itself or at least I think..
+        options = webdriver.ChromeOptions()
+        options.add_argument("user-data-dir=/Users/aaronkeller/Library/Application Support/Google/Chrome")
+        options.add_argument('google-chrome --profile-directory=Default')
+        # Launching chrome with the extention
+        self.driver = webdriver.Chrome(options=options, executable_path='./chromedriver89')
+        self.driver.get(urls[self.myLabel])
+
+    def save_image(self):
+        image = pyscreenshot.grab()
+        # To save the screenshot
+        image.save("test1.png")
+        self.img = Image.open("./test1.png")
+
+    def mario(self):
+        num_of_reviews = self.driver.find_element_by_xpath('/html/body/div[2]/div[3]/yelp-react-root/div/div[2]/div[1]/div[1]/div/div/div[2]/div[2]/span').text
+        stars = self.driver.find_elements_by_css_selector('aria-label')
+        print('starssss')
+        print(stars)
+        print(num_of_reviews)
+
+    def finding_edges(self):
+        self.bottom = pyautogui.locateCenterOnScreen('./Yelp guide.png', confidence=0.9)
+        self.right = pyautogui.locateCenterOnScreen('./Yelp Right.png', confidence=0.9)
+
+    def calender_checker(self):
+        self.driver.implicitly_wait(20)
+        time.sleep(0.5)
+        finddate = self.driver.find_elements_by_xpath('/html/body/div[2]/div[3]/yelp-react-root/div/div[3]/div/div/div[2]/div/div[1]/div[2]/section[2]/div[2]/div/ul/li[1]/div/div[2]/div/div[2]/span')
+        if len(finddate) == 0:
+            print('No Reviews')
+            self.driver.quit()
+        else:
+            date = self.driver.find_element_by_xpath('/html/body/div[2]/div[3]/yelp-react-root/div/div[3]/div/div/div[2]/div/div[1]/div[2]/section[2]/div[2]/div/ul/li[1]/div/div[2]/div/div[2]/span').text
+            date1 = datetime.datetime.now()
+            month = date1.strftime("%m")
+            finmonth =month.split('0')
+            findate = date.split('/')
+            thisweek = findate[1]
+
+            date = datetime.datetime.now()
+            month = date.strftime("%m")
+            today = date.strftime("%d")
+            daterange = []
+            i = 1
+            a = 1
+            while i < 10:
+                lastweek = int(today) - i
+                i+=1
+                if lastweek > 31:
+                    lastweek = 1
+                    daterange.append(lastweek)
+                elif lastweek < 1:
+                    lastweek = 32 - a
+                    daterange.append(lastweek)
+                    a += 1
+                else:
+                    daterange.append(lastweek)
+            print('date range')
+            print(daterange)
+            b = 0
+            if finmonth[1] == findate[0]:
+                #for c in daterange:
+                while b < 8:
+                    print('while loop')
+                    if int(daterange[b]) == int(thisweek):
+                        print('testing this part here')
+                        self.driver.implicitly_wait(30)
+                        time.sleep(0.5)
+                        fake_account = self.driver.find_element_by_xpath('/html/body/div[2]/div[3]/yelp-react-root/div/div[3]/div/div/div[2]/div/div[1]/div[2]/section[2]/div[2]/div/div[3]/div')
+                        scroll = fake_account.location_once_scrolled_into_view
+                        print(scroll)
+                        self.mario()
+                        time.sleep(0.5)
+                        self.finding_edges()
+                        # To capture the screen
+                        self.save_image()
+                        # Setting the points for cropped image
+                        left = 5
+                        top = self.right[1] - 45
+                        right = self.right[0] - 30
+                        bottom = self.bottom[1] - 50
+
+                        # Cropped image of above dimension
+                        # (It will not change orginal image)
+                        im1 = self.img.crop((left, top, right, bottom))
+
+                        # Shows the image in image viewer
+                        im1.save('snip of ' + str(self.selection) + '.png')
+                        im1.show()
+                        self.driver.quit()
+                    elif b == 7:
+                        self.mario()
+                        self.driver.quit()
+                        print('No Reviews')
+                    b += 1
+                    print(b)
+                    print('looping again')
+
+            else:
+                self.mario()
+                self.driver.quit()
+                print('No new Reviews')
+
+class App(tk.Tk, arctic):
+    def __init__(self):
+        super().__init__()
+
+        # configure the root window
+        self.title('My Awesome App')
+        self.geometry('300x100')
+        self.config(bg="#f9557a")
+
+        # Dropdown menu options
+        self.options = [
+            "Company 1",
+            "Company 2",
+            "Company 3"
+        ]
+
+        self.clicked = tk.StringVar()
+        # initial menu text
+        self.clicked.set("Choose a Property")
+
+        drop = tk.OptionMenu(self, self.clicked, *self.options)
+        drop.pack()
+
+        # button
+        self.button = tk.Button(self, text='Arctic')
+        self.button['command'] = self.show
+        self.button.pack()
+
+    def show(self):
+        self.selection = self.clicked.get()
+        self.myLabel = self.options.index(self.selection)
+        print(self.selection)
+        print(self.myLabel)
+        berserk = arctic()
+        berserk.loop(self.myLabel, self.selection)
+
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
