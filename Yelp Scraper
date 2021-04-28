@@ -25,7 +25,7 @@ class arctic():
     def launcher(self):
         # Remeber that on Windows the USER DATA file is the profile itself or at least I think..
         options = webdriver.ChromeOptions()
-        options.add_argument("user-data-dir=/Users/aaronkeller/Library/Application Support/Google/Chrome")
+        options.add_argument("user-data-dir=/Users/user/Library/Application Support/Google/Chrome")
         options.add_argument('google-chrome --profile-directory=Default')
         # Launching chrome with the extention
         self.driver = webdriver.Chrome(options=options, executable_path='./chromedriver89')
